@@ -1,0 +1,19 @@
+venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.DS_Store
+
+# Models
+*.pt
+
+# Logs
+logs/
+data/
+
+# Database
+*.db
+
+# OS files
+.DS_Store
