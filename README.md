@@ -73,11 +73,8 @@ logs/
                     ▼
       ID Assignment & Registration
                     │
-     ┌──────────────┼──────────────┐
-     ▼              ▼              ▼
- Image Logs     SQLite DB      events.log
-     │              │              │
-     └──────────────┴──────────────┘
+                    ▼
+       Image logs,SQLite db,events.log
                     │
                     ▼
               Streamlit UI
