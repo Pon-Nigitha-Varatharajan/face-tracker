@@ -49,7 +49,7 @@ logs/
 ├── data.db
 └── events.log
 
-🖥️ Streamlit Dashboard (Bonus Feature)
+🖥️ Streamlit Dashboard 
 	•	Live video stream
 	•	Real-time metrics (entries, exits, unique visitors)
 	•	Recent detections with images
@@ -121,8 +121,6 @@ face-tracker/
 │   └── events.log
 │
 └── README.md
-
-
 ⸻
 
 ⚙️ Configuration (config.json)
