@@ -152,7 +152,7 @@ streamlit run app/streamlit_app.py
 
 🎥 Input Options
 	•	Upload video file
-	•	RTSP stream (used during evaluation)
+	•	RTSP stream
 
 ⸻
 
@@ -189,32 +189,11 @@ Step 4: Optimization
 
 ⸻
 
-⚡ Compute Estimation
-
-Component	CPU Usage	GPU Usage
-YOLOv8	Medium	High
-DeepSORT	Low	Low
-InsightFace	Medium	Medium
-Overall	Moderate	Optional
-
-👉 Runs on CPU, faster with GPU
-
-⸻
-
 ⚠️ Assumptions
 	•	Faces are visible for recognition
 	•	One track ID corresponds to one person
 	•	Exit occurs when a person disappears for N frames
 	•	Lighting conditions may affect accuracy
-
-⸻
-
-📌 Sample Outputs
-
-Include in your submission:
-	•	Screenshots of Streamlit UI
-	•	logs/entries and logs/exits folders
-	•	Database (data.db) preview
 
 ⸻
 
