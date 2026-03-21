@@ -17,3 +17,5 @@ torchvision==0.17.2
 deep-sort-realtime 
 
 setuptools==68.2.2 
+
+streamlit 

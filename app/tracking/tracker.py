@@ -5,5 +5,4 @@ class Tracker:
         self.tracker = DeepSort(max_age=30)
 
     def update(self, detections, frame):
-        tracks = self.tracker.update_tracks(detections, frame=frame)
-        return tracks
+        return self.tracker.update_tracks(detections, frame=frame)

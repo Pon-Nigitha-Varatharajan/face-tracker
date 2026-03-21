@@ -1,0 +1,6 @@
+{
+  "frame_skip": 5,
+  "exit_frames": 30,
+  "similarity_threshold": 0.6,
+  "yolo_model": "yolov8n.pt"
+}
