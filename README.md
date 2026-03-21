@@ -4,162 +4,123 @@
 
 📌 Overview
 
-This project is an AI-powered real-time system that detects, tracks, and recognizes faces from video streams to accurately count unique visitors.
+This project is an AI-powered real-time system that detects, tracks, and recognizes people from video streams to accurately count unique visitors.
 
-It automatically:
-	•	Detects people using YOLO
-	•	Tracks them across frames using DeepSORT
+The system:
+	•	Detects people using YOLOv8
+	•	Tracks them using DeepSORT
 	•	Recognizes faces using InsightFace
-	•	Registers new faces with unique IDs
+	•	Automatically assigns unique IDs
 	•	Logs ENTRY and EXIT events with images
-	•	Stores all data in both filesystem and database
+	•	Stores logs in filesystem + database
+	•	Provides a live dashboard using Streamlit
 
 ⸻
 
 🚀 Features
 
 👤 Detection & Tracking
-	•	YOLOv8 for real-time person detection
-	•	DeepSORT for multi-object tracking
-	•	Handles multiple people simultaneously
+	•	Real-time person detection using YOLOv8
+	•	Multi-object tracking using DeepSORT
+	•	Works with video files and RTSP streams
 
-🧠 Face Recognition
-	•	InsightFace (ArcFace embeddings)
-	•	Automatic face registration
-	•	Unique ID assignment (F1, F2…)
+🧠 Face Recognition & Auto Registration
+	•	InsightFace for high-accuracy embeddings
+	•	Automatic face registration (no manual dataset required)
+	•	Unique ID generation (F1, F2…)
 
-📊 Visitor Counting
-	•	Counts unique visitors accurately
+📊 Unique Visitor Counting
+	•	Counts each person only once
 	•	Avoids duplicate counting using tracking + recognition
 
 📸 Logging System
 
-Each event (ENTRY / EXIT) stores:
-	•	Cropped face image
+Each ENTRY / EXIT event stores:
+	•	Cropped image
 	•	Timestamp
-	•	Face ID
+	•	Person ID
 	•	Event type
 
 Stored in:
 
-logs/entries/YYYY-MM-DD/
-logs/exits/YYYY-MM-DD/
-logs/data.db
-logs/events.log
+logs/
+├── entries/YYYY-MM-DD/
+├── exits/YYYY-MM-DD/
+├── data.db
+└── events.log
 
-🖥️ Streamlit Dashboard (Bonus)
-	•	Live video feed
+🖥️ Streamlit Dashboard (Bonus Feature)
+	•	Live video stream
 	•	Real-time metrics (entries, exits, unique visitors)
-	•	Event logs
-	•	Image previews
-	•	History view
+	•	Recent detections with images
+	•	Historical data view
 
 ⸻
 
 🏗️ System Architecture
 
-                ┌────────────────────┐
-                │   Video Input      │
-                │ (File / RTSP)      │
-                └─────────┬──────────┘
-                          ↓
-                ┌────────────────────┐
-                │ YOLOv8 Detection   │
-                └─────────┬──────────┘
-                          ↓
-                ┌────────────────────┐
-                │ DeepSORT Tracking  │
-                └─────────┬──────────┘
-                          ↓
-                ┌────────────────────┐
-                │ Face Recognition   │
-                │ (InsightFace)      │
-                └─────────┬──────────┘
-                          ↓
-                ┌────────────────────┐
-                │ ID Assignment &    │
-                │ Auto Registration  │
-                └─────────┬──────────┘
-                          ↓
-        ┌─────────────────┼─────────────────┐
-        ↓                 ↓                 ↓
-┌──────────────┐  ┌──────────────┐  ┌──────────────┐
-│ Image Logs   │  │ SQLite DB    │  │ events.log   │
-└──────────────┘  └──────────────┘  └──────────────┘
-                          ↓
-                ┌────────────────────┐
-                │ Streamlit UI       │
-                └────────────────────┘
+        Video Input (File / RTSP)
+                    │
+                    ▼
+            YOLOv8 Detection
+                    │
+                    ▼
+            DeepSORT Tracking
+                    │
+                    ▼
+        Face Recognition (InsightFace)
+                    │
+                    ▼
+      ID Assignment & Registration
+                    │
+     ┌──────────────┼──────────────┐
+     ▼              ▼              ▼
+ Image Logs     SQLite DB      events.log
+     │              │              │
+     └──────────────┴──────────────┘
+                    │
+                    ▼
+              Streamlit UI
 
-
-⸻
-
-🧠 AI Planning
-
-Step 1: Problem Understanding
-	•	Detect faces in real-time
-	•	Track them reliably
-	•	Count unique visitors without duplication
-
-Step 2: Model Selection
-	•	YOLOv8 → fast detection
-	•	DeepSORT → stable tracking
-	•	InsightFace → high accuracy face embeddings
-
-Step 3: System Design
-	•	Modular architecture
-	•	Separation of detection, tracking, recognition, and logging
-	•	SQLite for lightweight database
-
-Step 4: Optimization
-	•	Frame skipping to reduce computation
-	•	Crop validation to prevent errors
-	•	Efficient logging system
-
-⸻
-
-⚡ Compute Estimation
-
-Component	CPU Usage	GPU Usage
-YOLOv8	Medium	High
-DeepSORT	Low	Low
-InsightFace	Medium	Medium
-Overall	Moderate	Optional GPU
-
-👉 Runs on CPU, faster with GPU acceleration
+The system follows a modular pipeline architecture ensuring scalability and separation of concerns.
 
 ⸻
 
 📂 Repository Structure
 
-app/
-├── detection/
-│   └── yolo_detector.py
+face-tracker/
 │
-├── tracking/
-│   └── tracker.py
+├── app/
+│   ├── detection/
+│   │   └── yolo_detector.py
+│   │
+│   ├── tracking/
+│   │   └── tracker.py
+│   │
+│   ├── recognition/
+│   │   └── face_recognizer.py
+│   │
+│   ├── logging_system/
+│   │   ├── logger.py
+│   │   └── image_logger.py
+│   │
+│   ├── database/
+│   │   ├── db.py
+│   │   └── queries.py
+│   │
+│   ├── config/
+│   │   └── config.json
+│   │
+│   ├── main.py
+│   └── streamlit_app.py
 │
-├── recognition/
-│   └── face_recognizer.py
+├── logs/
+│   ├── entries/
+│   ├── exits/
+│   ├── data.db
+│   └── events.log
 │
-├── logging_system/
-│   ├── logger.py
-│   └── image_logger.py
-│
-├── database/
-│   ├── db.py
-│
-├── config/
-│   └── config.json
-│
-├── main.py
-├── streamlit_app.py
-
-logs/
-├── entries/
-├── exits/
-├── data.db
-├── events.log
+└── README.md
 
 
 ⸻
@@ -178,41 +139,93 @@ logs/
 
 ▶️ How to Run
 
-1️⃣ Clone Repository
+1️⃣ Clone the Repository
 
 git clone <your-repo-link>
-cd <project-folder>
+cd face-tracker
 
 2️⃣ Install Dependencies
 
 pip install -r requirements.txt
 
-3️⃣ Run Application
+3️⃣ Run the Application
 
-streamlit run streamlit_app.py
+streamlit run app/streamlit_app.py
 
 
 ⸻
 
 🎥 Input Options
 	•	Upload video file
-	•	RTSP camera stream (used in evaluation)
+	•	RTSP stream (used during evaluation)
 
 ⸻
 
 📊 Output
-	•	Real-time detection with IDs
+	•	Real-time person detection with ID
 	•	Entry & Exit counts
 	•	Unique visitor count
-	•	Image logs stored locally
-	•	Database records for each event
+	•	Saved images of detections
+	•	Database records for all events
+
+⸻
+
+🧠 AI Planning
+
+Step 1: Problem Understanding
+	•	Detect people in real-time
+	•	Track consistently
+	•	Count unique visitors without duplication
+
+Step 2: Model Selection
+	•	YOLOv8 → fast detection
+	•	DeepSORT → stable tracking
+	•	InsightFace → accurate recognition
+
+Step 3: System Design
+	•	Modular architecture
+	•	Separate detection, tracking, recognition, logging
+	•	SQLite for lightweight storage
+
+Step 4: Optimization
+	•	Frame skipping to reduce computation
+	•	Crop validation to avoid errors
+	•	Efficient logging pipeline
+
+⸻
+
+⚡ Compute Estimation
+
+Component	CPU Usage	GPU Usage
+YOLOv8	Medium	High
+DeepSORT	Low	Low
+InsightFace	Medium	Medium
+Overall	Moderate	Optional
+
+👉 Runs on CPU, faster with GPU
 
 ⸻
 
 ⚠️ Assumptions
-	•	Face visibility improves recognition accuracy
+	•	Faces are visible for recognition
 	•	One track ID corresponds to one person
-	•	Exit is determined when a person is not detected for N frames
+	•	Exit occurs when a person disappears for N frames
+	•	Lighting conditions may affect accuracy
+
+⸻
+
+📌 Sample Outputs
+
+Include in your submission:
+	•	Screenshots of Streamlit UI
+	•	logs/entries and logs/exits folders
+	•	Database (data.db) preview
+
+⸻
+
+🎥 Demo Video
+
+(Add your Loom / YouTube link here)
 
 ⸻
 
@@ -228,4 +241,3 @@ This project is a part of a hackathon run by https://katomaran.com
 :::
 
 ⸻
-
