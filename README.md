@@ -136,7 +136,7 @@ face-tracker/
 
 1️⃣ Clone the Repository
 
-git clone <your-repo-link>
+git clone <https://github.com/Pon-Nigitha-Varatharajan/face-tracker>
 cd face-tracker
 
 2️⃣ Install Dependencies
@@ -199,7 +199,7 @@ Step 4: Optimization
 
 🎥 Demo Video
 
-(Add your Loom / YouTube link here)
+https://www.loom.com/share/d90161c596024cf0ac9a28fe2c856a49
 
 ⸻
 

@@ -30,10 +30,11 @@ def run(video_source, streamlit_callback=None):
     active_tracks = set()
     last_seen = {}
     track_to_face = {}
+    track_last_crop = {}
 
-    # 🔥 CHANGE: track unique persons instead of faces
-    unique_persons = set()
-    captured_ids = set()
+    # 🔥 FIX 1: Separate sets
+    unique_persons = set()        # final unique count
+    counted_faces = set()         # only for FIDs (IMPORTANT)
 
     video_id = create_video(os.path.basename(video_source))
 
@@ -68,7 +69,6 @@ def run(video_source, streamlit_callback=None):
 
             crop = frame[t:b, l:r]
 
-            # ❗ Skip invalid crops
             if crop is None or crop.size == 0:
                 continue
 
@@ -76,15 +76,18 @@ def run(video_source, streamlit_callback=None):
             if h_crop < 20 or w_crop < 20:
                 continue
 
+            # Save last crop
+            track_last_crop[track_id] = crop
+
             # ---------------- FACE RECOGNITION ----------------
             if track_id not in track_to_face:
                 face_id = recognizer.recognize(crop)
+
                 if face_id:
                     track_to_face[track_id] = face_id
+                    log_event(video_id, face_id, "RECOGNIZED")
 
             face_id = track_to_face.get(track_id)
-
-            # 🔥 IMPORTANT: Always assign display ID
             display_id = face_id if face_id else f"T{track_id}"
 
             # ---------------- ENTRY ----------------
@@ -92,8 +95,15 @@ def run(video_source, streamlit_callback=None):
                 active_tracks.add(track_id)
                 entry_count += 1
 
-                # 🔥 ALWAYS count person
-                unique_persons.add(display_id)
+                # 🔥 FIX 2: Unique counting logic
+                if face_id:
+                    # Only count known faces once
+                    if face_id not in counted_faces:
+                        unique_persons.add(face_id)
+                        counted_faces.add(face_id)
+                else:
+                    # Unknowns are always unique
+                    unique_persons.add(display_id)
 
                 img = save_image(display_id, crop, "entry")
 
@@ -116,13 +126,18 @@ def run(video_source, streamlit_callback=None):
                 face_id = track_to_face.get(tid)
                 display_id = face_id if face_id else f"T{tid}"
 
-                img = save_image(display_id, frame, "exit")
+                crop_img = track_last_crop.get(tid, frame)
+
+                img = save_image(display_id, crop_img, "exit")
 
                 log_event(video_id, display_id, "EXIT")
                 insert_event(video_id, display_id, "EXIT", img)
 
+                # CLEANUP
                 active_tracks.remove(tid)
                 track_to_face.pop(tid, None)
+                last_seen.pop(tid, None)
+                track_last_crop.pop(tid, None)
 
         # ---------------- CALLBACK ----------------
         if streamlit_callback:
@@ -131,14 +146,15 @@ def run(video_source, streamlit_callback=None):
                 video_id,
                 entry_count,
                 exit_count,
-                unique_persons   # 🔥 UPDATED
+                unique_persons
             )
 
+    # ---------------- FINAL STATS ----------------
     update_video_stats(
         video_id,
         entry_count,
         exit_count,
-        len(unique_persons)   # 🔥 UPDATED
+        len(unique_persons)
     )
 
     cap.release()
